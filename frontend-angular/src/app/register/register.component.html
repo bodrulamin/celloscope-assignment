@@ -8,13 +8,12 @@
         <div class="card shadow-lg">
           <div class="card-body p-5">
             <h1 class="fs-4 card-title fw-bold mb-4">Register</h1>
-            <form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+            <form method="POST" (ngSubmit)="register()" [formGroup]="fg">
               <div class="mb-3">
                 <label class="mb-2 text-muted" for="userId">User ID</label>
-                <input id="userId" type="text" class="form-control" name="userId" value="" required autofocus>
-                <div class="invalid-feedback">
-                  User ID is required
-                </div>
+                <input formControlName="userId" id="userId" type="text" class="form-control" name="userId" value="" required autofocus>
+                <div *ngIf="ifError('ucon')" class="text-danger">   User ID is required</div>
+
               </div>
 
               <div class="mb-3">
