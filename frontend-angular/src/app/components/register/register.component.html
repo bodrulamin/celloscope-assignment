@@ -11,24 +11,25 @@
             <form method="POST" (ngSubmit)="register()" [formGroup]="fg">
               <div class="mb-3">
                 <label class="mb-2 text-muted" for="userId">User ID</label>
-                <input formControlName="userId" id="userId" type="text" class="form-control" name="userId" value="" required autofocus>
-                <div *ngIf="ifError('ucon')" class="text-danger">   User ID is required</div>
+                <input formControlName="userId" id="userId" type="text" class="form-control" name="userId"/>
+                <div *ngIf="ifError('userId')" class="text-danger">Insert a valid User ID (numbers only)</div>
 
               </div>
 
               <div class="mb-3">
                 <label class="mb-2 text-muted" for="mobile">Mobile</label>
-                <input id="mobile" type="mobile" class="form-control" name="mobile" value="" required>
-                <div class="invalid-feedback">
-                  Phone is invalid
+                <input formControlName="mobile" id="mobile" type="text" class="form-control" name="mobile" value=""
+                       required>
+                <div *ngIf="ifError('mobile')" class="text-danger">
+                  Insert a valid mobile number
                 </div>
               </div>
 
               <div class="mb-3">
                 <label class="mb-2 text-muted" for="password">Password</label>
-                <input id="password" type="password" class="form-control" name="password" required>
-                <div class="invalid-feedback">
-                  Password is required
+                <input formControlName="password" id="password" type="password" class="form-control" name="password">
+                <div *ngIf="ifError('password')" class="text-danger">
+                  Insert a valid password
                 </div>
               </div>
 
@@ -45,7 +46,7 @@
           </div>
           <div class="card-footer py-3 border-0">
             <div class="text-center">
-              Already have an account? <a href="index.html" class="text-dark">Login</a>
+              Already have an account? <a routerLink="/" class="text-dark">Login</a>
             </div>
           </div>
         </div>

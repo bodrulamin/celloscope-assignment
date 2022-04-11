@@ -1,0 +1,54 @@
+<section class="h-100">
+  <div class="container h-100">
+    <div class="row justify-content-sm-center h-100">
+      <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+        <div class="text-center my-5">
+          <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">
+        </div>
+        <div class="card shadow-lg">
+          <div class="card-body p-5">
+            <h1 class="fs-4 card-title fw-bold mb-4">Forgot Password</h1>
+            <form method="POST" (ngSubmit)="infoMatched?update():forgot()" [formGroup]="fg">
+              <div class="mb-3">
+                <label class="mb-2 text-muted" for="userId">User ID</label>
+                <input [readOnly]="infoMatched" formControlName="userId" id="userId" type="text" class="form-control" name="userId"/>
+                <div *ngIf="ifError('userId')" class="text-danger">Insert a valid User ID (numbers only)</div>
+
+              </div>
+
+              <div class="mb-3">
+                <label class="mb-2 text-muted" for="mobile">Mobile</label>
+                <input [readOnly]="infoMatched"  formControlName="mobile" id="mobile" type="text" class="form-control" name="mobile" value=""
+                       required>
+                <div *ngIf="ifError('mobile')" class="text-danger">
+                  Insert a valid mobile number
+                </div>
+              </div>
+              <div *ngIf="infoMatched" class="mb-3">
+                <label class="mb-2 text-muted" for="password">Password</label>
+                <input formControlName="password" id="password" type="password" class="form-control" name="password">
+                <div *ngIf="ifError('password')" class="text-danger">
+                  Insert a valid password
+                </div>
+              </div>
+
+              <div class="align-items-center d-flex">
+                <button type="submit" class="btn btn-primary ms-auto">
+                  {{infoMatched? 'Update':'Check'}}
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer py-3 border-0">
+            <div class="text-center">
+              I know my password? <a routerLink="/" class="text-dark">Login</a>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-5 text-muted">
+          Copyright &copy; 2017-2021 &mdash; Your Company
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

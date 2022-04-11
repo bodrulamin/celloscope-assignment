@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class User implements Serializable {
     @Id
-    int userId;
+    long userId;
     String password;
     String mobile;
 }

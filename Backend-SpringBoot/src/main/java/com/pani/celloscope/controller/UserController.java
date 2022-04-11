@@ -36,7 +36,7 @@ public class UserController {
         try {
             res.getData().put("data", userRepository.save(user));
             res.setStatusCode(HttpStatus.OK.value());
-            res.setMessage("User registration succesfull !");
+            res.setMessage("User registration succesful !");
             return ResponseEntity.status(HttpStatus.OK).body(res);
 
         } catch (Exception e) {
