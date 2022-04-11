@@ -28,7 +28,7 @@ Login
     "password" : "555"
     }'
 
-forgot word: userID and mobile match
+forgot password: userID and mobile match
 
     curl --location --request POST 'localhost:8080/forgot' \
     --header 'Content-Type: application/json' \

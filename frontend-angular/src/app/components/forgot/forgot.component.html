@@ -18,7 +18,7 @@
 
               <div class="mb-3">
                 <label class="mb-2 text-muted" for="mobile">Mobile</label>
-                <input [readOnly]="infoMatched"  formControlName="mobile" id="mobile" type="text" class="form-control" name="mobile" value=""
+                <input   formControlName="mobile" id="mobile" type="text" class="form-control" name="mobile" value=""
                        required>
                 <div *ngIf="ifError('mobile')" class="text-danger">
                   Insert a valid mobile number
