@@ -4,8 +4,10 @@ import com.pani.celloscope.controller.UserController;
 import com.pani.celloscope.model.ApiResponse;
 import com.pani.celloscope.model.User;
 import com.pani.celloscope.repository.UserRepository;
+import com.pani.celloscope.validation.UserValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,41 +18,51 @@ public class UserService {
     ApiResponse res = ApiResponse.getInstance();
     final UserRepository userRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public ResponseEntity<?> registerUser(User user) {
+        boolean validated = UserValidation.userIsValid(user);
+        return validated ? proceedToRegisterUser(user) : ResponseEntity.badRequest().build();
+    }
 
-            boolean exists = userRepository.existsById(user.getUserId());
-            if (exists) {
-                res.getData().put("data", userRepository.findById(user.getUserId()));
-                res.setStatusCode(HttpStatus.CONFLICT.value());
-                res.setMessage("User ID already in use ! ");
-                logger.error("register: "+ res.getMessage() + user);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
-            }
-
-            try {
-                res.getData().put("data", userRepository.save(user));
-                res.setStatusCode(HttpStatus.OK.value());
-                res.setMessage("User registration succesful !");
-                logger.info("register: "+ res.getMessage() + user);
-                return ResponseEntity.status(HttpStatus.OK).body(res);
-
-            } catch (Exception e) {
-                res.getData().put("data", null);
-                res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                res.setMessage(e.getMessage());
-                logger.error("register: "+ res.getMessage() + " " + user);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
-            }
+    private ResponseEntity<ApiResponse> proceedToRegisterUser(User user) {
+        boolean exists = userRepository.existsById(user.getUserId());
+        if (exists) {
+            res.getData().put("data", userRepository.findById(user.getUserId()));
+            res.setStatusCode(HttpStatus.CONFLICT.value());
+            res.setMessage("User ID already in use ! ");
+            logger.error("register: " + res.getMessage() + user);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
         }
+
+        try {
+            res.getData().put("data", userRepository.save(user));
+            res.setStatusCode(HttpStatus.OK.value());
+            res.setMessage("User registration succesful !");
+            logger.info("register: " + res.getMessage() + user);
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+
+        } catch (Exception e) {
+            res.getData().put("data", null);
+            res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            res.setMessage(e.getMessage());
+            logger.error("register: " + res.getMessage() + " " + user);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+    }
 
 
     public ResponseEntity<?> updateUser(User user) {
-        boolean exists = userRepository.existsById(user.getUserId());
+        boolean validated = UserValidation.isValidMobile(user);
+        return validated? proceedToUpdateUser(user) : ResponseEntity.badRequest().build();
 
+    }
+
+    private ResponseEntity<ApiResponse> proceedToUpdateUser(User user) {
+        boolean exists = userRepository.existsById(user.getUserId());
         if (exists) {
             res.getData().put("data", userRepository.save(user));
             res.setStatusCode(HttpStatus.OK.value());
@@ -64,6 +76,5 @@ public class UserService {
             logger.error("update: " + res.getMessage() + user);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
         }
-
     }
 }

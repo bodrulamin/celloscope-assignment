@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_flutter/networks/user_ops.dart';
-import 'package:frontend_flutter/screens/home.dart';
 import 'package:frontend_flutter/widgets/text_field.dart';
 
 import '../constant/routs.dart';
 import '../local_storage/localops.dart';
 import '../models/api_res.dart';
 import '../models/user.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: const SingleChildScrollView(child: LoginBody()),
       appBar: AppBar(
-        title: const Text(HomePage.title),
+        title:   Text(Routes.appname),
       ),
     );
   }
@@ -37,7 +37,6 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
-
   final _formKey = GlobalKey<FormState>();
 
   final _useridController = TextEditingController();
@@ -46,6 +45,7 @@ class _LoginBodyState extends State<LoginBody> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         children: [
@@ -62,19 +62,18 @@ class _LoginBodyState extends State<LoginBody> {
           TextBox(controller: _passwordController, label: "Password"),
           TextButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(
-                    context, Routes.forgot);
+                Navigator.pushReplacementNamed(context, Routes.forgot);
               },
               child: const Text('Forgot password')),
           Column(
             children: [
               ElevatedButton(
                 onPressed: () {
+
                   if (_formKey.currentState!.validate()) {
                     submitRequest(context);
-
                   }
-                 },
+                },
                 child: const Text('Login'),
               ),
               TextButton(
@@ -91,26 +90,25 @@ class _LoginBodyState extends State<LoginBody> {
   }
 
   void submitRequest(BuildContext context) {
-               User user = User(
-        userId: int.parse(_useridController.text),
-        password: _passwordController.text, mobile: '',
-       );
-    
+    User user = User(
+      userId: int.parse(_useridController.text),
+      password: _passwordController.text,
+      mobile: '',
+    );
+
     login(user).then((res) {
-      ApiResponse apires =
-          ApiResponse.fromMap(jsonDecode(res.body));
-    
+      ApiResponse apires = ApiResponse.fromMap(jsonDecode(res.body));
+
       SnackBar snackBar = SnackBar(
         content: Text(apires.message),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       if (res.statusCode == 200) {
-        User loggedInUser = User.fromMap(apires.data['user']);
+
+        User loggedInUser = User.fromMap(apires.data['data']);
         saveToStorage(loggedInUser);
-        Navigator.pushReplacementNamed(context, Routes.home);
+        Navigator.pushReplacementNamed(context, Routes.welcome);
       }
     });
   }
-
-
 }

@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class CelloscopeApplicationTests {
 
-
     @Test
     void UserHasValidMobile() {
         User user = new User(9999, "password", "01725717136");
@@ -20,7 +19,7 @@ class CelloscopeApplicationTests {
     @Test
     void UserPasswordShouldNotBeNull() {
         User user = new User(9999, "password", "01725717136");
-        assertTrue(UserValidation.isValidPassword(user));
+        assertTrue(UserValidation.isPasswordNotNull(user));
     }
 
     @Test
@@ -38,7 +37,17 @@ class CelloscopeApplicationTests {
         assertTrue(UserValidation.isPasswordMatched(user.getPassword(),user2.getPassword()));
     }
 
-
+    @Test
+    void MobileMatcherShouldBeValid() {
+        User user = new User(9999, "lskdjf", "01725717136");
+        User user2 = new User(9999, "lskdjf", "01725717136");
+        assertTrue(UserValidation.isMobileMatched(user.getMobile(),user2.getMobile()));
+    }
+    @Test
+    void UserInformationShouldBeValid() {
+        User user = new User(9999, "lskdjf", "01725717136");
+         assertTrue(UserValidation.userIsValid(user));
+    }
 
 
 

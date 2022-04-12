@@ -20,7 +20,7 @@ class TextBox extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        obscureText: label == 'Password',
+        obscureText: label.toLowerCase() == 'Password'.toLowerCase(),
         controller: _usernameController,
         readOnly: disabled,
         decoration: InputDecoration(
@@ -46,14 +46,13 @@ class TextBox extends StatelessWidget {
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter valid ' + label;
-          }else{
-            return null;
           }
+          return null;
+
+
 
         },
-        onChanged: (value) {
 
-        },
       ),
     );
   }

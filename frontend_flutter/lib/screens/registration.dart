@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_flutter/networks/user_ops.dart';
-import 'package:frontend_flutter/screens/home.dart';
-import 'package:frontend_flutter/widgets/text_field.dart';
+ import 'package:frontend_flutter/widgets/text_field.dart';
 
 import '../constant/routs.dart';
 import '../models/api_res.dart';
@@ -22,7 +21,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       body: const SingleChildScrollView(child: RegistrationBody()),
       appBar: AppBar(
-        title: const Text(HomePage.title),
+        title:   Text(Routes.appname),
       ),
     );
   }
@@ -69,8 +68,26 @@ class _RegistrationBodyState extends State<RegistrationBody> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      submitRequest(context);
+                      User user = User(
+                          userId: int.parse(_useridController.text.toString()),
+                          password: _passwordController.text,
+                          mobile: _mobileController.text);
 
+                      print(user);
+                      register(user).then((res) {
+                        print(res.body);
+                        ApiResponse apires =
+                        ApiResponse.fromMap(jsonDecode(res.body));
+
+                        SnackBar snackBar = SnackBar(
+                          content: Text(apires.message),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        if (res.statusCode == 200) {
+                            Navigator.pushReplacementNamed(context, Routes.login);
+                        }
+                      });
                     }
 
 
@@ -90,26 +107,5 @@ class _RegistrationBodyState extends State<RegistrationBody> {
     );
   }
 
-  void submitRequest(BuildContext context) {
-    User user = User(
-        userId: int.parse(_useridController.text.toString()),
-        password: _passwordController.text,
-        mobile: _mobileController.text);
-    
-    print(user);
-    register(user).then((res) {
-      print(res.body);
-      ApiResponse apires =
-          ApiResponse.fromMap(jsonDecode(res.body));
-    
-      SnackBar snackBar = SnackBar(
-        content: Text(apires.message),
-      );
-    
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      if (res.statusCode == 200) {
-    //    Navigator.pushReplacementNamed(context, Routes.home);
-      }
-    });
-  }
+
 }

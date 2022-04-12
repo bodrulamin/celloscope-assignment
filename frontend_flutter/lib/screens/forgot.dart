@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_flutter/networks/user_ops.dart';
-import 'package:frontend_flutter/screens/home.dart';
 import 'package:frontend_flutter/widgets/text_field.dart';
 
 import '../constant/routs.dart';
@@ -23,7 +22,7 @@ class _ForgotPageState extends State<ForgotPage> {
     return Scaffold(
       body: const SingleChildScrollView(child: LoginBody()),
       appBar: AppBar(
-        title: const Text(HomePage.title),
+        title:  Text(Routes.appname),
       ),
     );
   }
@@ -78,6 +77,7 @@ class _LoginBodyState extends State<LoginBody> {
                   mobile: _mobileController.text,
                   password: infoMatched ? _passwordController.text : "",
                 );
+
                 if (!infoMatched) {
                   forgot(user).then((res) {
                     ApiResponse apires =

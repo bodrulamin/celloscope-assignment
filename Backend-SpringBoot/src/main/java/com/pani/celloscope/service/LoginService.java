@@ -1,31 +1,37 @@
 package com.pani.celloscope.service;
 
-import com.pani.celloscope.controller.LoginController;
 import com.pani.celloscope.model.ApiResponse;
 import com.pani.celloscope.model.User;
 import com.pani.celloscope.repository.UserRepository;
+import com.pani.celloscope.validation.UserValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.pani.celloscope.validation.UserValidation.isPasswordMatched;
+import static com.pani.celloscope.validation.UserValidation.*;
 
 @Service
 public class LoginService {
     Logger logger = LoggerFactory.getLogger(LoginService.class);
-
     final UserRepository userRepository;
     ApiResponse res = ApiResponse.getInstance();
 
+    @Autowired
     public LoginService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public ResponseEntity<?> login(User user) {
+        boolean validated = UserValidation.isPasswordNotNull(user);
+        return validated ? proceedToLogin(user) : ResponseEntity.badRequest().build();
+    }
+
+    private ResponseEntity<ApiResponse> proceedToLogin(User user) {
         Optional<User> dbUser = userRepository.findById(user.getUserId());
 
         if (dbUser.isEmpty()) {
@@ -36,9 +42,7 @@ public class LoginService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
 
         } else {
-
             boolean passwordMatched = isPasswordMatched(user.getPassword(), dbUser.get().getPassword());
-
             if (passwordMatched) {
                 res.getData().put("data", dbUser.get());
                 res.setStatusCode(HttpStatus.OK.value());
@@ -52,12 +56,8 @@ public class LoginService {
                 logger.error("login: " + res.getMessage() + user);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
-
         }
     }
-
-
-
 
 
     public ResponseEntity<?> forgot(User user) {
@@ -73,7 +73,7 @@ public class LoginService {
 
         } else {
 
-            boolean mobileMatched = dbUser.get().getMobile().equals(user.getMobile());
+            boolean mobileMatched = isMobileMatched(dbUser.get().getMobile(), user.getMobile());
 
             if (mobileMatched) {
                 res.getData().put("data", dbUser.get());

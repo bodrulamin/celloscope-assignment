@@ -2,9 +2,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_flutter/screens/forgot.dart';
-import 'package:frontend_flutter/screens/home.dart';
-import 'package:frontend_flutter/screens/login.dart';
+ import 'package:frontend_flutter/screens/login.dart';
 import 'package:frontend_flutter/screens/registration.dart';
+import 'package:frontend_flutter/screens/welcome.dart';
 import 'package:frontend_flutter/theme/colors.dart';
 
 import 'constant/routs.dart';
@@ -19,8 +19,8 @@ void main() {
       Routes.root: (context) =>  LoginWrapper(),
       Routes.login: (context) =>  LoginPage(),
       Routes.registration: (context) =>  RegistrationPage(),
-      Routes.home: (context) => HomePage(),
-       Routes.forgot: (context) => const ForgotPage(),
+        Routes.forgot: (context) => const ForgotPage(),
+       Routes.welcome: (context) => const WelcomePage(),
     },
     theme: ThemeData(
       primarySwatch: colorSwatch,
@@ -67,7 +67,7 @@ class _LoginWrapperState extends State<LoginWrapper> {
             return const LoginPage();
           }
 
-          return HomePage();
+          return WelcomePage();
         } else {
           return const CircularProgressIndicator();
         }
