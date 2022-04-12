@@ -40,61 +40,76 @@ class _RegistrationBodyState extends State<RegistrationBody> {
   final _useridController = TextEditingController();
   final _mobileController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: [
-          Image.asset("assets/images/registrationimage.jpg"),
-          const Text(
-            "Register Here",
-            style: TextStyle(
-                fontSize: 25,
-                fontFamily: "RobotoMono",
-                fontWeight: FontWeight.bold,
-                color: Colors.blue),
-          ),
-          TextBox(controller: _useridController, label: "User ID"),
-          TextBox(controller: _passwordController, label: "Password"),
-          TextBox(controller: _mobileController, label: "Mobile"),
-          Column(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  User user = User(
-                      userId: int.parse(_useridController.text.toString()),
-                      password: _passwordController.text,
-                      mobile: _mobileController.text);
-
-                  print(user);
-                  register(user).then((res) {
-                    print(res.body);
-                    ApiResponse apires =
-                        ApiResponse.fromMap(jsonDecode(res.body));
-
-                    SnackBar snackBar = SnackBar(
-                      content: Text(apires.message),
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    if (res.statusCode == 200) {
-                  //    Navigator.pushReplacementNamed(context, Routes.home);
-                    }
-                  });
-                },
-                child: const Text('Register'),
-              ),
-              TextButton(
+      child: Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+          children: [
+            Image.asset("assets/images/registrationimage.jpg"),
+            const Text(
+              "Register Here",
+              style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: "RobotoMono",
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue),
+            ),
+            TextBox(controller: _useridController, label: "User ID"),
+            TextBox(controller: _passwordController, label: "Password"),
+            TextBox(controller: _mobileController, label: "Mobile"),
+            Column(
+              children: [
+                ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, Routes.login);
+                    if (_formKey.currentState!.validate()) {
+                      submitRequest(context);
+
+                    }
+
+
                   },
-                  child: Text('Already a user? Sign in here'))
-            ],
-          )
-        ],
+                  child: const Text('Register'),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, Routes.login);
+                    },
+                    child: Text('Already a user? Sign in here'))
+              ],
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  void submitRequest(BuildContext context) {
+    User user = User(
+        userId: int.parse(_useridController.text.toString()),
+        password: _passwordController.text,
+        mobile: _mobileController.text);
+    
+    print(user);
+    register(user).then((res) {
+      print(res.body);
+      ApiResponse apires =
+          ApiResponse.fromMap(jsonDecode(res.body));
+    
+      SnackBar snackBar = SnackBar(
+        content: Text(apires.message),
+      );
+    
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      if (res.statusCode == 200) {
+    //    Navigator.pushReplacementNamed(context, Routes.home);
+      }
+    });
   }
 }

@@ -43,6 +43,17 @@ class TextBox extends StatelessWidget {
           border: InputBorder.none,
           labelText: label,
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter valid ' + label;
+          }else{
+            return null;
+          }
+
+        },
+        onChanged: (value) {
+
+        },
       ),
     );
   }
