@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:motion_toast/motion_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_flutter/networks/user_ops.dart';
 import 'package:frontend_flutter/widgets/text_field.dart';
@@ -103,6 +103,7 @@ class _LoginBodyState extends State<LoginBody> {
         content: Text(apires.message),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
       if (res.statusCode == 200) {
 
         User loggedInUser = User.fromMap(apires.data['data']);

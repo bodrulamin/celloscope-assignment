@@ -19,74 +19,83 @@ import static com.pani.celloscope.validation.UserValidation.*;
 public class LoginService {
     Logger logger = LoggerFactory.getLogger(LoginService.class);
     final UserRepository userRepository;
-    ApiResponse res = ApiResponse.getInstance();
+    ApiResponse apiResponse = ApiResponse.getInstance();
 
     @Autowired
     public LoginService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<?> login(User user) {
+    public ApiResponse login(User user) {
         boolean validated = UserValidation.isPasswordNotNull(user);
-        return validated ? proceedToLogin(user) : ResponseEntity.badRequest().build();
+        if (validated) {
+            return proceedToLogin(user);
+        } else {
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            apiResponse.setMessage("Request data is not valid or sufficient");
+            return apiResponse;
+
+        }
+
     }
 
-    private ResponseEntity<ApiResponse> proceedToLogin(User user) {
+    private ApiResponse proceedToLogin(User user) {
         Optional<User> dbUser = userRepository.findById(user.getUserId());
 
         if (dbUser.isEmpty()) {
-            res.getData().put("data", null);
-            res.setStatusCode(HttpStatus.NOT_FOUND.value());
-            res.setMessage("User not found ! ");
-            logger.error("login: " + res.getMessage() + user);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+            apiResponse.setMessage("User not found ! ");
+            logger.error("login: " + apiResponse.getMessage() + user);
+            return apiResponse;
 
         } else {
             boolean passwordMatched = isPasswordMatched(user.getPassword(), dbUser.get().getPassword());
             if (passwordMatched) {
-                res.getData().put("data", dbUser.get());
-                res.setStatusCode(HttpStatus.OK.value());
-                res.setMessage("Login Successful ! ");
-                logger.info("login: " + res.getMessage() + user);
-                return ResponseEntity.status(HttpStatus.OK).body(res);
+                apiResponse.getData().put("data", dbUser.get());
+                apiResponse.setStatusCode(HttpStatus.OK.value());
+                apiResponse.setMessage("Login Successful ! ");
+                logger.info("login: " + apiResponse.getMessage() + user);
+                return apiResponse;
             } else {
-                res.getData().put("data", null);
-                res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-                res.setMessage("User ID  password does not match ");
-                logger.error("login: " + res.getMessage() + user);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+                apiResponse.getData().put("data", null);
+                apiResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+                apiResponse.setMessage("User ID  password does not match ");
+                logger.error("login: " + apiResponse.getMessage() + user);
+                return apiResponse;
             }
         }
     }
 
 
-    public ResponseEntity<?> forgot(User user) {
+    public ApiResponse forgot(User user) {
 
         Optional<User> dbUser = userRepository.findById(user.getUserId());
 
         if (dbUser.isEmpty()) {
-            res.getData().put("data", null);
-            res.setStatusCode(HttpStatus.NOT_FOUND.value());
-            res.setMessage("User not found ! ");
-            logger.error("forgot: " + res.getMessage() + user);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+            apiResponse.setMessage("User not found ! ");
+            logger.error("forgot: " + apiResponse.getMessage() + user);
+            return apiResponse;
 
         } else {
 
             boolean mobileMatched = isMobileMatched(dbUser.get().getMobile(), user.getMobile());
 
             if (mobileMatched) {
-                res.getData().put("data", dbUser.get());
-                res.setStatusCode(HttpStatus.OK.value());
-                res.setMessage("User ID mobile matched ");
-                logger.info("forgot: " + res.getMessage() + user);
-                return ResponseEntity.status(HttpStatus.OK).body(res);
+                apiResponse.getData().put("data", dbUser.get());
+                apiResponse.setStatusCode(HttpStatus.OK.value());
+                apiResponse.setMessage("User ID mobile matched ");
+                logger.info("forgot: " + apiResponse.getMessage() + user);
+                return apiResponse;
             } else {
-                res.getData().put("data", null);
-                res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-                res.setMessage("User ID  mobile does not match ");
-                logger.error("forgot: " + res.getMessage() + user);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+                apiResponse.getData().put("data", null);
+                apiResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+                apiResponse.setMessage("User ID  mobile does not match ");
+                logger.error("forgot: " + apiResponse.getMessage() + user);
+                return apiResponse;
             }
 
         }

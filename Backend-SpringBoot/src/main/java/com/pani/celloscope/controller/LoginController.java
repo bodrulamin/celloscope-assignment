@@ -20,7 +20,7 @@ public class LoginController {
     final LoginService service;
     final UserRepository userRepository;
 
-    ApiResponse res = ApiResponse.getInstance();
+    ApiResponse apiResponse = ApiResponse.getInstance();
 
     @Autowired
     public LoginController(LoginService service, UserRepository userRepository) {
@@ -30,13 +30,18 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        logger.info("login: starting with " + user );
-        return service.login(user);
+        logger.info("login: starting with " + user);
+        apiResponse = service.login(user);
+
+        return ResponseEntity.status(apiResponse.getStatusCode()).body(apiResponse);
+
     }
+
 
     @PostMapping("/forgot")
     public ResponseEntity<?> forgot(@RequestBody User user) {
-        logger.info("forgot: starting with " + user.getUserId() );
-      return service.forgot(user);
+        logger.info("forgot: starting with " + user.getUserId());
+        apiResponse = service.forgot(user);
+        return ResponseEntity.status(apiResponse.getStatusCode()).body(apiResponse);
     }
 }

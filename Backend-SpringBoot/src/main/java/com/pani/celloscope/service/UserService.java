@@ -1,6 +1,5 @@
 package com.pani.celloscope.service;
 
-import com.pani.celloscope.controller.UserController;
 import com.pani.celloscope.model.ApiResponse;
 import com.pani.celloscope.model.User;
 import com.pani.celloscope.repository.UserRepository;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     Logger logger = LoggerFactory.getLogger(UserService.class);
-    ApiResponse res = ApiResponse.getInstance();
+    ApiResponse apiResponse = ApiResponse.getInstance();
     final UserRepository userRepository;
 
     @Autowired
@@ -23,58 +22,75 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<?> registerUser(User user) {
+    public ApiResponse registerUser(User user) {
         boolean validated = UserValidation.userIsValid(user);
-        return validated ? proceedToRegisterUser(user) : ResponseEntity.badRequest().build();
-    }
+        if (validated) {
+            return proceedToRegisterUser(user);
+        } else {
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            apiResponse.setMessage("Request data is not valid or sufficient");
+            return apiResponse;
 
-    private ResponseEntity<ApiResponse> proceedToRegisterUser(User user) {
+        }
+
+     }
+
+    private ApiResponse proceedToRegisterUser(User user) {
         boolean exists = userRepository.existsById(user.getUserId());
         if (exists) {
-            res.getData().put("data", userRepository.findById(user.getUserId()));
-            res.setStatusCode(HttpStatus.CONFLICT.value());
-            res.setMessage("User ID already in use ! ");
-            logger.error("register: " + res.getMessage() + user);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
+            apiResponse.getData().put("data", userRepository.findById(user.getUserId()));
+            apiResponse.setStatusCode(HttpStatus.CONFLICT.value());
+            apiResponse.setMessage("User ID already in use ! ");
+            logger.error("register: " + apiResponse.getMessage() + user);
+            return apiResponse;
         }
 
         try {
-            res.getData().put("data", userRepository.save(user));
-            res.setStatusCode(HttpStatus.OK.value());
-            res.setMessage("User registration succesful !");
-            logger.info("register: " + res.getMessage() + user);
-            return ResponseEntity.status(HttpStatus.OK).body(res);
-
+            apiResponse.getData().put("data", userRepository.save(user));
+            apiResponse.setStatusCode(HttpStatus.OK.value());
+            apiResponse.setMessage("User registration succesful !");
+            logger.info("register: " + apiResponse.getMessage() + user);
+            return apiResponse;
         } catch (Exception e) {
-            res.getData().put("data", null);
-            res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            res.setMessage(e.getMessage());
-            logger.error("register: " + res.getMessage() + " " + user);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
-        }
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            apiResponse.setMessage(e.getMessage());
+            logger.error("register: " + apiResponse.getMessage() + " " + user);
+            return apiResponse;        }
     }
 
 
-    public ResponseEntity<?> updateUser(User user) {
+    public ApiResponse updateUser(User user) {
         boolean validated = UserValidation.isValidMobile(user);
-        return validated? proceedToUpdateUser(user) : ResponseEntity.badRequest().build();
+
+         if (validated) {
+            return proceedToUpdateUser(user);
+        } else {
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            apiResponse.setMessage("Request data is not valid or sufficient");
+            return apiResponse;
+
+        }
+
 
     }
 
-    private ResponseEntity<ApiResponse> proceedToUpdateUser(User user) {
+    private ApiResponse proceedToUpdateUser(User user) {
         boolean exists = userRepository.existsById(user.getUserId());
         if (exists) {
-            res.getData().put("data", userRepository.save(user));
-            res.setStatusCode(HttpStatus.OK.value());
-            res.setMessage("User information updated ! ");
-            logger.info("update: " + res.getMessage() + user);
-            return ResponseEntity.status(HttpStatus.OK).body(res);
+            apiResponse.getData().put("data", userRepository.save(user));
+            apiResponse.setStatusCode(HttpStatus.OK.value());
+            apiResponse.setMessage("User information updated ! ");
+            logger.info("update: " + apiResponse.getMessage() + user);
+            return apiResponse;
         } else {
-            res.getData().put("data", null);
-            res.setStatusCode(HttpStatus.NOT_FOUND.value());
-            res.setMessage("User not found ! ");
-            logger.error("update: " + res.getMessage() + user);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+            apiResponse.getData().put("data", null);
+            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+            apiResponse.setMessage("User not found ! ");
+            logger.error("update: " + apiResponse.getMessage() + user);
+            return apiResponse;
         }
     }
 }
